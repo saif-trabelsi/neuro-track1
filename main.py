@@ -12,7 +12,7 @@ from export_report import generate_html_report
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Neuro-Track : Conduite Autonome par Algorithmes Génétiques - Saifeddine TRABELSI")
+    pygame.display.set_caption("Neuro-Track : Conduite Autonome par AG - Saifeddine TRABELSI & Achref TLILI")
     clock = pygame.time.Clock()
 
     # Initialisation des composants

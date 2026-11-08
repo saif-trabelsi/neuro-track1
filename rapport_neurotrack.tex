@@ -163,27 +163,86 @@ Ce cerveau n'a besoin d'aucune bibliothèque lourde comme TensorFlow ou PyTorch 
 \section{Comment fonctionne l'Algorithme Génétique (AG) ?}
 % ============================================================
 
-L'Algorithme Génétique suit 5 étapes simples inspirées de la biologie :
+L'Algorithme Génétique s'inspire directement des mécanismes de l'évolution naturelle dans la biologie. Voici comment nous l'avons modélisé pour nos voitures :
 
-\subsection{1. L'ADN (Le Chromosome)}
-L'ADN d'une voiture, c'est simplement la liste de tous les petits réglages (les poids) de son cerveau. Il y a en tout \textbf{57 nombres}. Modifier ces 57 nombres change complètement la manière dont la voiture tourne le volant.
+\subsection{1. L'ADN (Le Chromosome) : Qu'est-ce que c'est concrètement ?}
+Dans la nature, l'ADN d'un être vivant est une suite de molécules qui définit ses caractéristiques physiques. Dans notre projet, une voiture ne possède pas de corps biologique : elle est pilotée par un petit ordinateur de bord (le réseau de neurones).
+
+Son \textbf{ADN (Chromosome)}, c'est tout simplement \textbf{un tableau contenant 57 nombres réels} (compris généralement entre $-1.0$ et $+1.0$) :
+\begin{center}
+\fbox{\texttt{ADN = [ 0.45, -0.82, 0.12, 0.95, -0.31, ... (57 nombres) ]}}
+\end{center}
+
+\subsubsection{D'où vient exactement ce chiffre 57 ?}
+Ce nombre correspond précisément à l'ensemble des connexions (poids et biais) reliant les neurones du cerveau :
+\begin{enumerate}
+  \item \textbf{Les 5 capteurs radars reliés aux 8 neurones cachés :} Chaque capteur est connecté à chacun des 8 neurones, ce qui donne $5 \times 8 = \mathbf{40}$ connexions (poids synaptiques $W_1$).
+  \item \textbf{Le réglage de base des 8 neurones cachés :} Chacun possède son propre seuil d'activation, soit $\mathbf{8}$ nombres (biais $b_1$).
+  \item \textbf{Les 8 neurones cachés reliés au neurone de braquage :} $8 \times 1 = \mathbf{8}$ connexions (poids synaptiques $W_2$).
+  \item \textbf{Le réglage de base du neurone de braquage :} $\mathbf{1}$ nombre (biais $b_2$).
+\end{enumerate}
+En faisant la somme :
+\begin{center}
+\textbf{Taille totale de l'ADN} $= 40 + 8 + 8 + 1 = \mathbf{57 \text{ gènes (nombres)}}$
+\end{center}
+
+\subsubsection{Que fait concrètement un gène dans la conduite ?}
+Chaque nombre agit comme un \textbf{potentiomètre (un multiplicateur)} qui indique au cerveau comment réagir face à un obstacle :
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Exemple concret (Lien entre le Radar Gauche et le Volant) :}
+  \begin{itemize}
+    \item Si ce gène est \textbf{positif fort (+0.9)} : Dès que le radar gauche détecte un mur très proche, le cerveau pousse le volant vers la droite pour s'éloigner du danger $\to$ \textbf{Excellent réflexe !}
+    \item Si ce gène est \textbf{négatif (-0.9)} : Dès que le radar gauche voit un mur, le cerveau braque à gauche et envoie la voiture droit dans le décor $\to$ \textbf{Mauvais réflexe !}
+  \end{itemize}
+\end{itemize}
+À la Génération 1, ces 57 nombres sont tirés \textbf{complètement au hasard}. C'est pour cette raison que la quasi-totalité des voitures s'écrasent au tout début.
 
 \subsection{2. La note de la voiture (Le score de Fitness)}
-Pour savoir quelle voiture est la meilleure, on lui donne une note :
+Pour savoir quelles voitures ont bien conduit, l'algorithme leur attribue une note d'aptitude (le score de Fitness) :
 \begin{itemize}[leftmargin=*]
-  \item Le circuit contient \textbf{18 portes invisibles (checkpoints)} réparties le long du tracé.
-  \item Chaque fois qu'une voiture passe une porte dans le bon ordre, elle gagne \textbf{+1000 points}.
-  \item Elle gagne aussi des points bonus pour chaque pixel parcouru vers la porte suivante.
-  \item \textbf{Règle anti-triche :} Si une voiture tourne en rond sur place sans franchir de nouvelle porte pendant 3 secondes, elle est éliminée. Cela empêche les voitures de tricher pour avoir des points sans avancer.
+  \item \textbf{18 Portes invisibles (Checkpoints) :} Le circuit est découpé en 18 zones de passage successives.
+  \item Chaque fois qu'une voiture valide une porte dans le bon ordre, elle gagne \textbf{+1000 points}.
+  \item Elle gagne également des points continus pour chaque pixel parcouru en direction de la porte suivante.
+  \item \textbf{Règle anti-triche (Timer anti-blocage) :} Si une voiture décide de tourner en rond sur place ou reste immobile contre un rail pendant plus de 3 secondes sans franchir de nouvelle porte, elle est immédiatement déclarée détruite ($alive = False$). Cela élimine les comportements opportunistes.
 \end{itemize}
 
-\subsection{3. Les 4 étapes de l'évolution (Génération suivante)}
-Quand toutes les voitures se sont écrasées, l'algorithme prépare la génération suivante :
-\begin{enumerate}
-  \item \textbf{L'Élitisme (Garder les champions) :} On garde les $10\%$ meilleures voitures (les 4 championnes) directement sans les modifier. Cela garantit que la génération suivante ne sera jamais plus bête que la précédente.
-  \item \textbf{La Sélection :} On choisit les parents parmi les voitures qui sont allées le plus loin.
-  \item \textbf{Le Croisement (L'enfant hérite des deux parents) :} On prend deux bonnes voitures (Parent A et Parent B). L'enfant reçoit la moitié des réglages de A et la moitié de B.
-  \item \textbf{La Mutation (Le hasard qui fait progresser) :} On change légèrement quelques réglages au hasard ($12\%$ de chance). C'est ce petit coup de pouce qui permet à une voiture de tenter un nouveau braquage et de découvrir comment passer un virage difficile.
+\subsection{3. Les 4 étapes de l'évolution (Fabrication de la génération suivante)}
+Dès que les 40 voitures de la course se sont écrasées, l'Algorithme Génétique prend le relais pour fabriquer la Génération $N+1$ en appliquant 4 étapes rigoureuses :
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Étape 1 : L'Élitisme (Garder les champions intacts)}
+  \begin{itemize}
+    \item On identifie les $10\%$ meilleures voitures de la course (les 4 championnes ayant réalisé le plus haut score).
+    \item On copie leur ADN \textbf{directement et sans aucune modification} dans la nouvelle génération.
+    \item \textit{Pourquoi c'est capital ?} C'est l'assurance tous risques du système. Sans élitisme, une bonne combinaison découverte par chance pourrait être détruite par un mauvais croisement ou une mauvaise mutation. Grâce à l'élitisme, le record de la simulation ne baisse \textbf{JAMAIS}.
+  \end{itemize}
+
+  \item \textbf{Étape 2 : La Sélection par Tournoi (Qui a le droit d'être parent ?)}
+  \begin{itemize}
+    \item Pour créer les 36 autres voitures de la flotte, il faut désigner des parents.
+    \item L'algorithme prend \textbf{3 voitures au hasard} parmi celles qui ont fait un score correct et les compare (tournoi de taille $k=3$). La voiture ayant le meilleur score gagne le tournoi et devient le \textbf{Parent A}.
+    \item On répète le même tournoi pour choisir un \textbf{Parent B}.
+    \item Cette méthode favorise fortement les bonnes voitures tout en laissant parfois leur chance à des voitures moyennes qui possèdent peut-être un gène caché prometteur.
+  \end{itemize}
+
+  \item \textbf{Étape 3 : Le Croisement Uniforme / Crossover (Créer l'enfant)}
+  \begin{itemize}
+    \item À partir des génomes des deux parents sélectionnés ($A$ et $B$), on génère l'ADN de l'enfant.
+    \item Pour chacune des 57 cases, l'ordinateur lance virtuellement une pièce de monnaie (probabilité $50/50$) :
+    \begin{itemize}
+      \item Pile : Le gène provient du Parent A.
+      \item Face : Le gène provient du Parent B.
+    \end{itemize}
+    \item L'enfant peut ainsi hériter de la capacité du Parent A à bien négocier les virages à gauche, combinée à la capacité du Parent B à rester stable dans les lignes droites !
+  \end{itemize}
+
+  \item \textbf{Étape 4 : La Mutation Gaussienne (L'étincelle de hasard)}
+  \begin{itemize}
+    \item Si l'on se contentait de mélanger les gènes existants, on ne découvrirait jamais de stratégie inédite.
+    \item Pour chaque gène de l'enfant, il existe une probabilité de $12\%$ qu'une mutation intervienne.
+    \item Si le gène mute, on lui ajoute une légère variation aléatoire (un bruit gaussien, par exemple $+0.2$ ou $-0.3$).
+    \item C'est cette petite étincelle stochastique qui permet à une voiture d'oser braquer légèrement plus fort à un endroit précis, réussissant ainsi un virage que ses parents n'avaient jamais su franchir.
+  \end{itemize}
 \end{enumerate}
 
 % ============================================================

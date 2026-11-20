@@ -1,13 +1,11 @@
 import pygame
 import sys
-import webbrowser
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, POPULATION_SIZE
 from track import Track
 from ga import GeneticAlgorithm
 from ui_panel import UIPanel
 from ui_modal import ReportModal
 from plot_results import generate_fitness_plot
-from export_report import generate_html_report
 
 def main():
     pygame.init()
@@ -104,17 +102,7 @@ def main():
                 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if modal.is_open:
-                    action = modal.handle_click(mouse_pos)
-                    if action == "export_html":
-                        ga.export_csv("metrics.csv")
-                        generate_fitness_plot("metrics.csv", "fitness_evolution.png")
-                        generate_html_report("metrics.csv", "fitness_evolution.png", "rapport_neurotrack.html")
-                        try:
-                            webbrowser.open("rapport_neurotrack.html")
-                        except Exception:
-                            pass
-                        status_message = "Rapport HTML généré et ouvert dans le navigateur !"
-                        status_timer = 150
+                    modal.handle_click(mouse_pos)
                 else:
                     action_id = panel.handle_mouse_click(mouse_pos)
                     if action_id:
@@ -223,7 +211,6 @@ def main():
     if len(ga.history) > 0:
         ga.export_csv("metrics.csv")
         generate_fitness_plot("metrics.csv", "fitness_evolution.png")
-        generate_html_report("metrics.csv", "fitness_evolution.png", "rapport_neurotrack.html")
         if all_time_best_car:
             ga.save_best_dna(all_time_best_car, "best_brain.json")
 

@@ -5,7 +5,6 @@ from config import POPULATION_SIZE
 from track import Track
 from ga import GeneticAlgorithm
 from plot_results import generate_fitness_plot
-from export_report import generate_html_report
 
 def train():
     pygame.init()
@@ -39,8 +38,7 @@ def train():
 
     ga.export_csv("metrics.csv")
     generate_fitness_plot("metrics.csv", "fitness_evolution.png")
-    generate_html_report("metrics.csv", "fitness_evolution.png", "rapport_neurotrack.html")
-    print("[OK] Métriques, graphique et rapport HTML générés !")
+    print("[OK] Métriques et graphique générés !")
 
 if __name__ == "__main__":
     train()

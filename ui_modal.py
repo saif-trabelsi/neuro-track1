@@ -48,11 +48,6 @@ class ReportModal:
             self.is_open = False
             return "close"
 
-        # Bouton export HTML
-        export_btn_rect = pygame.Rect(self.rect.right - 280, self.rect.y + 12, 220, 28)
-        if export_btn_rect.collidepoint(mouse_pos):
-            return "export_html"
-
         # Onglets
         for i, _ in enumerate(self.tabs):
             tab_rect = pygame.Rect(self.rect.x + 20 + i * 210, self.rect.y + 55, 200, 32)
@@ -78,12 +73,6 @@ class ReportModal:
         # 3. En-tête
         title = self.font_title.render("RAPPORT TECHNIQUE OFFICIEL : NEURO-TRACK (AG)", True, COLOR_PRIMARY)
         screen.blit(title, (self.rect.x + 25, self.rect.y + 15))
-
-        # Bouton d'export HTML
-        export_rect = pygame.Rect(self.rect.right - 280, self.rect.y + 12, 220, 28)
-        pygame.draw.rect(screen, (0, 130, 200), export_rect, border_radius=6)
-        lbl_export = self.font_tab.render("📄 Exporter en Rapport Web (HTML)", True, (255, 255, 255))
-        screen.blit(lbl_export, (export_rect.x + 10, export_rect.y + 5))
 
         # Bouton fermer [X]
         close_rect = pygame.Rect(self.rect.right - 45, self.rect.y + 12, 32, 28)

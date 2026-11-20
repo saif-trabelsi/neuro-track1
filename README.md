@@ -26,7 +26,7 @@ Le système repose sur la **Neuroévolution** (couplage Réseau de Neurones + Al
 
 * 🧠 **Visualiseur Neuronal en Direct :** Moniteur synaptique dans l'UI affichant en temps réel les neurones actifs et les synapses colorées du leader.
 * 📈 **Courbe d'Apprentissage Temps Réel :** Graphique vectoriel dynamique intégré traçant l'évolution du Fitness maximal et moyen.
-* 📄 **Rapport Intégré (Touche `F1`) :** Fenêtre modale académique en 4 onglets détaillant la théorie mathématique et exportable en **HTML/PDF**.
+* 📄 **Rapport Intégré (Touche `F1`) :** Fenêtre modale académique en 4 onglets détaillant la théorie mathématique directement dans le logiciel.
 * ⚡ **Accélération Temporelle :** Possibilité de multiplier la vitesse de simulation jusqu'à **$16\times$** pour observer 10 générations en 15 secondes.
 * 🏆 **Mode Champion Pré-entraîné :** Injection instantanée d'un modèle élite (`best_brain.json`) capable d'enchaîner plusieurs tours sans crash.
 
